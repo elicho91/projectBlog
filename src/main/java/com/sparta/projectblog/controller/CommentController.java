@@ -24,7 +24,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/api/posts/{id}/{commentId}")
-    public String deleteComment(@PathVariable Long id, @PathVariable Long commentId, HttpServletRequest request) {
+    public String deleteComment(@PathVariable Long id, @PathVariable Long commentId, HttpServletRequest request) {  // 토큰을 가져와야하기 때문에 request 객체를 넣어준다.
         return commentService.delete(id, commentId, request);
     }
 }

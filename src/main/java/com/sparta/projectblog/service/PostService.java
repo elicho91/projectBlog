@@ -32,8 +32,8 @@ public class PostService {
 
     @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        String token = jwtUtil.resolveToken(request);   // 토큰을 가져오는 부분
+        Claims claims;  // jwt 안에 들어있는 정보를 담을 수 있는 객체
 
         // 올바른 토큰인지 확인
         if (token != null) {
@@ -106,7 +106,6 @@ public class PostService {
                 throw new IllegalArgumentException("본인의 글이 아닙니다.");
             }
         }
-        // 업데이트 결과를 PostResponseDto 타입의 객체에 담아 보내기 위해선?
     }
 
     @Transactional

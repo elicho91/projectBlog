@@ -20,17 +20,17 @@ public class UserController {
     @ResponseBody
     @PostMapping("/signup")
     public String signup(@RequestBody SignupRequestDto signupRequestDto) {
-        System.out.println("아이디를 입력해주세요, 최소 4자 이상 10자 이하, 알파벳 소문자, 숫자");
-        System.out.println("비밀번호를 입력해주세요, 최소 8자 이상 15자 이하, 알파벳 대소문자, 숫자,특수문자");
+        System.out.println("아이디를 입력해주세요 (최소 4자 이상 10자 이하, 알파벳 소문자, 숫자)");
+        System.out.println("비밀번호를 입력해주세요, (최소 8자 이상 15자 이하, 알파벳 대소문자, 숫자,특수문자)");
         userService.signup(signupRequestDto);
-        return "success";
+        return "회원이 되신걸 환영합니다.";
     }
 
-    @ResponseBody // ajax 형식으로 body를 받아오기 떄문에 body 어노테이션을 써줘야한다.
+    @ResponseBody // ajax 형식으로 body를 받아오기 떄문에 body 어노테이션이 필욧
     @PostMapping("/login") // request에서 헤더가 넘어온 것을 받아오는 것처럼 토큰을 반환할때는 response 객체로 반환,
     public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         userService.login(loginRequestDto, response);
-        return "success";
+        return "로그인에 성공하였습니다.";
     }
 
 }
