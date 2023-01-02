@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,12 +29,10 @@ public class PostService {
 
     private final JwtUtil jwtUtil;
 
-    private final CommentService commentService;
-
     @Transactional
     public PostResponseDto createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);   // 토큰을 가져오는 부분
-        Claims claims;  // jwt 안에 들어있는 정보를 담을 수 있는 객체
+        String token = jwtUtil.resolveToken(request);
+        Claims claims;
 
         // 올바른 토큰인지 확인
         if (token != null) {
@@ -48,15 +47,11 @@ public class PostService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            List<Comment> commentList = commentService.getComments();
+            List<Comment> commentList = new ArrayList<>();
 
-            Post post = Post.createPost(
-                    postRequestDto.getTitle(), postRequestDto.getUsername(), postRequestDto.getContents(), user.getId(), commentList
-            );
+            Post post = postRepository.saveAndFlush(new Post(postRequestDto, user.getId(), commentList));
 
-            postRepository.saveAndFlush(post);
-
-            return new PostResponseDto(post);
+            return new PostResponseDto(postRepository.save(post));
         } else {
             return null;
         }
@@ -106,6 +101,7 @@ public class PostService {
                 throw new IllegalArgumentException("본인의 글이 아닙니다.");
             }
         }
+        // 업데이트 결과를 PostResponseDto 타입의 객체에 담아 보내기 위해선?
     }
 
     @Transactional

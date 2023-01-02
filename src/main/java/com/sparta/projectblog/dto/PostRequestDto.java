@@ -5,10 +5,10 @@ import lombok.Getter;
 @Getter
 public class PostRequestDto {
 
-    private String title;
+    String title;
 
-    private String username;
+    String username;
 
-    private String contents;
+    String contents;
 
 }

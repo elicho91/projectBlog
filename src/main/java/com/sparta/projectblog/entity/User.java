@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     // nullable: null 허용 여부
@@ -35,5 +35,4 @@ public class User {
         this.email = email;
         this.role = role;
     }
-
 }

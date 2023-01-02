@@ -1,12 +1,14 @@
 package com.sparta.projectblog.dto;
 
 import com.sparta.projectblog.entity.Comment;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 public class CommentResponseDto {
+
     private Long id;
 
     private Long userId;
@@ -17,8 +19,9 @@ public class CommentResponseDto {
 
     private String comment;
 
-    public CommentResponseDto(Long userId, Long postId, Comment comment) {
-        this.id = comment.getId();
+    @Builder
+    public CommentResponseDto(Long id, Long userId, Long postId, Comment comment) {
+        this.id = id;
         this.userId = userId;
         this.postId = postId;
         this.username = comment.getUsername();

@@ -1,6 +1,7 @@
 package com.sparta.projectblog.service;
 
 import com.sparta.projectblog.dto.CommentRequestDto;
+import com.sparta.projectblog.dto.CommentResponseDto;
 import com.sparta.projectblog.entity.Comment;
 import com.sparta.projectblog.entity.Post;
 import com.sparta.projectblog.entity.User;
@@ -31,7 +32,7 @@ public class CommentService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public void createComment(Long postId, HttpServletRequest request, CommentRequestDto commentRequestDto) {
+    public CommentResponseDto createComment(Long post_id, String commentUsername, String commentComment, HttpServletRequest request) {
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -48,26 +49,26 @@ public class CommentService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            Post post = postRepository.findById(postId).orElseThrow(
-                    () -> new IllegalArgumentException("올바르지 않은 글 번호입니다.")
+            Post post = postRepository.findById(post_id).orElseThrow(
+                    () -> new IllegalArgumentException("존재하지 않는 글입니다.")
             );
 
-            Comment comment = Comment.createComment(
-                    user.getId(), commentRequestDto.getUsername(), commentRequestDto.getComment(), post
-            );
 
-            post.putCommentList(comment);
+            Comment comment = new Comment(commentUsername, commentComment);
+
+            post.add(comment);
+
+            Comment createdComment = commentRepository.save(comment);
+
+            return CommentResponseDto.builder()
+                    .id(createdComment.getId())
+                    .postId(post.getId())
+                    .userId(user.getId())
+                    .comment(createdComment)
+                    .build();
+        } else {
+            return null;
         }
-    }
-
-    @Transactional(readOnly = true)
-    public List<Comment> getComments() {
-        return commentRepository.findAllByOrderByModifiedAtDesc();
-    }
-
-    @Transactional(readOnly = true)
-    public Optional<Comment> getCommentById(Long id) {
-        return commentRepository.findById(id);
     }
 
     @Transactional

@@ -1,29 +1,28 @@
 package com.sparta.projectblog.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.projectblog.dto.CommentRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "comment")
 public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "comment_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JsonBackReference // 순환참조 문제
+    @ManyToOne(fetch = FetchType.LAZY) // 영속성 관리 문제
+    @JoinColumn(name = "post_id", nullable = false) // 외래 키를 매핑할 때 사용, 외래 참조 키
+    @Setter
     private Post post;
-
-    @Column(nullable = false)
-    private Long userId;
 
     @Column
     private String username;
@@ -32,20 +31,9 @@ public class Comment extends Timestamped {
     private String comment;
 
     @Builder
-    public Comment( Long userId, String username, String comment, Post post) {
-        this.userId = userId;
+    public Comment(String username, String comment) {
         this.username = username;
         this.comment = comment;
-        this.post = post;
-    }
-
-    public static Comment createComment(Long userId, String username, String comment, Post post) {
-        return Comment.builder()
-                .userId(userId)
-                .username(username)
-                .comment(comment)
-                .post(post)
-                .build();
     }
 
     public void update(CommentRequestDto commentRequestDto) {

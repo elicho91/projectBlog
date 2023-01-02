@@ -20,22 +20,16 @@ import java.util.Date;
 public class JwtUtil {
     // Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
-
-    // 상숑자 권한 값의 KEY
-    public static final String AUTHORIZATION_KEY = "auth";
-
     // Token 식별자
     private static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간 (1시간)
+    // 토큰 만료시간
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
-    // 프로퍼티에서 설정한 jwt 키값을 가져올 수 있다.
     @Value("${jwt.secret.key}")
     private String secretKey;
-    private Key key;    // 토큰을 만들때 가져올 키 값
+    private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-    // 처음에 객체가 생성될 때 초기화 하는 함수
     @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
@@ -58,8 +52,8 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))   // 생성되는 시간으로부터 1시간 유횻
-                        .setIssuedAt(date) // 토큰이 언제 만들어졌는지 (필수 아님)
+                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
+                        .setIssuedAt(date) // 필수 아님
                         .signWith(key, signatureAlgorithm)
                         .compact();
     }
